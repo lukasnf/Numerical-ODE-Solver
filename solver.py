@@ -66,8 +66,3 @@ class solver:
         function = interp1d(x,y,kind="cubic")
         num = np.round(function(val),dec)
         return num
-
-solver = solver()
-f = solver.get_function("cos(x)")
-x,y = solver.solve_euler(f,0,0,1000,10)
-solver.plot(x,y,"x","y","Euler")
