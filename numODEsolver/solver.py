@@ -6,7 +6,7 @@ import numpy as np
 class solver:
 
 # get_function() -> Takes a function of x and y as an input. Make sure to use correct python syntax and put everything in curved brackets.
-#   --> Example: solver.get_function("x+y"), The diff.eq. would then be: y' = x+y and it will be numerically solved for y.
+#   --> Example: numODEsolver.get_function("x+y"), The diff.eq. would then be: y' = x+y and it will be numerically solved for y.
     def get_function(self,func):
         x,y = sp.symbols("x,y")
         func = sp.sympify(func)
