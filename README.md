@@ -17,7 +17,7 @@ from numODEsolver import solver
 import numpy as np #optional for constants 
 
 solver = solver()
-f = solver.get_function("cos(x)")
+f = solver.get_function("cos(x)") , f = solver.get_function("diff(y)")
 x,y = solver.solve_rk4(f,x0=0,y0=1,n=10000,bound=10.1)
 solver.plot(x,y,xlabel="x",ylabel="y",title="rk4")
 print(solver.get_value(x,y,val=10,dec=5)
