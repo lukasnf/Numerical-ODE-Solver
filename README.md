@@ -14,18 +14,18 @@ pip install numODEsolver
 ## Example
 ```bash
 from numODEsolver import solver
-import numpy as np #optional for constants 
+import matplotlib.pyplot as plt #optional for plot
 
 solver = solver()
 f = solver.get_function("cos(x)") , f = solver.get_function("diff(y)")
 x,y = solver.solve_rk4(f,x0=0,y0=1,n=10000,bound=10.1)
-solver.plot(x,y,xlabel="x",ylabel="y",title="rk4")
 print(solver.get_value(x,y,val=10,dec=5)
 ```
 
 # Version History
 
 -  8.12.2024 - v0.1 -> only 1st order ODE's are solvable, more features coming soon
+- 15.12.2024 - v0.2 -> security updates, removed plot function
 
 
 ---

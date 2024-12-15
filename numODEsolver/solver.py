@@ -1,26 +1,27 @@
-import matplotlib.pyplot as plt
 import sympy as sp
 from scipy.interpolate import interp1d
 import numpy as np
 
 class solver:
 
-# get_function() -> Takes a function of x and y as an input. Make sure to use correct python syntax and put everything in curved brackets.
+    def validate_func(self,func):
+        symbols = {"x":sp.Symbol("x"),"y":sp.Symbol("y"),"pi":sp.pi,"e":sp.E}
+        symbols_2 = sp.__dict__
+        try:
+            sp.sympify(func, {**symbols, **symbols_2})
+            return True
+        except:
+            raise ValueError("Invalid function")
+        
+
+    # get_function() -> Takes a function of x and y as an input. Make sure to use correct python syntax and put everything in curved brackets.
 #   --> Example: numODEsolver.get_function("x+y"), The diff.eq. would then be: y' = x+y and it will be numerically solved for y.
     def get_function(self,func):
-        x,y = sp.symbols("x,y")
-        func = sp.sympify(func)
-        f = sp.lambdify((x,y), func)
-        return f
-
-    # optional plot with matplotlib, pretty self-explanatory
-    def plot(self,x,y,xlabel,ylabel,title):
-        plt.plot(x,y)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        plt.title(title)
-        plt.grid()
-        plt.show()
+        if self.validate_func(func):
+            x,y = sp.symbols("x,y")
+            func = sp.sympify(func)
+            f = sp.lambdify((x,y), func)
+            return f
 
 # You can choose between 2 methods to solve the ODE numerically : euler and rk4. Those take the function f from before
 #   as an input and 2 Initial conditions x0 and y0 as well as an x-axis bound. If n is a high number the result will be more accurate.
