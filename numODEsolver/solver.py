@@ -6,10 +6,10 @@ class solver:
 # get_function() -> Takes a function of x and y as an input. Make sure to use correct python syntax and put everything in curved brackets.
 #   --> Example: numODEsolver.get_function("x+y"), The diff.eq. would then be: y' = x+y and it will be numerically solved for y.
     def get_function(self,func):
-            x,y = sp.symbols("x,y")
-            func = sp.sympify(func)
-            f = sp.lambdify((x,y), func)
-            return f
+        x,y = sp.symbols("x y")
+        func = sp.sympify(func)
+        f = sp.lambdify((x,y), func, "numpy")
+        return f
 
 # You can choose between 2 methods to solve the ODE numerically : euler and rk4. Those take the function f from before
 #   as an input and 2 Initial conditions x0 and y0 as well as an x-axis bound. If n is a high number the result will be more accurate.
