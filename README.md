@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt #optional for plot
 solver = solver()
 f = solver.get_function("cos(x)") 
 x,y = solver.solve_rk4(f,x0=0,y0=1,n=10000,bound=10.1)
-print(solver.get_value(x,y,val=10,dec=5)
+print(solver.get_value(x,y,val=10,dec=5))
 ```
 
 # Version History
