@@ -11,15 +11,42 @@ class solver:
         f = sp.lambdify((x,y), func, "numpy")
         return f
 
+# same get_function method, just for 2nd order odes you. Example: y'' = -y,
+    def get_function_2order(self,func):
+        x,y,dy = sp.symbols("x y dy")
+        func = sp.sympify(func)
+        f = sp.lambdify((x,y,dy), func, "numpy")
+        return f
+
 # You can choose between 2 methods to solve the ODE numerically : euler and rk4. Those take the function f from before
-#   as an input and 2 Initial conditions x0 and y0 as well as an x-axis bound. If n is a high number the result will be more accurate.
+#  as an input and 2 Initial conditions x0 and y0 as well as an x-axis bound. If n is a high number the result will be more accurate.
 # Both return arrays with the x,y values
+
+# solves the ode with initial conditions y(x0) , dy(x0)
+    def solve_euler_2order(self,f,x0,y0,dy0,n,bound):
+        if n <= 0:
+            raise ValueError("n must be greater than zero.")
+        y = [y0]
+        dy = [dy0]
+        x = [x0]
+        h = (bound-x0)/n
+        for i in range(n):
+            x_e2 = x[-1] + h
+            y_e2 = y[-1] + h * dy[-1]
+            dy_e2 = dy[-1] + h * f(x[-1],y[-1],dy[-1])
+
+            x.append(x_e2)
+            y.append(y_e2)
+            dy.append(dy_e2)
+
+        return x,y,dy
+
     def solve_euler(self,f,x0,y0,n,bound):
         if n <= 0:
             raise ValueError("n must be greater than zero.")
         y = [y0]
         x = [x0]
-        h =  (bound-x0)/n
+        h = (bound-x0)/n
         for i in range(n):
             y_e = y[-1] + h * f(x[-1], y[-1])
             x_e = x[-1] + h
