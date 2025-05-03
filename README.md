@@ -1,6 +1,6 @@
 # Numerical ODE Solver
 
-This project is a Python implementation for solving ordinary differential equations (ODEs) numerically. The script allows users to choose between two methods: Euler's Method and Runge-Kutta 4th Order Method (RK4), providing a visual representation of the solution.
+This project is a Python implementation for solving ordinary differential equations (ODEs) numerically. The script allows users to choose between two methods: Euler's Method and Runge-Kutta 4th Order Method (RK4), providing a visual representation of the solution (optional). Note: Euler's Method is more inaccurate than RK4.
 
 ## Requirements
 Python version >= 3.8
