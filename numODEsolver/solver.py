@@ -1,84 +1,81 @@
-import sympy as sp
 from scipy.interpolate import interp1d
 import numpy as np
+from asteval import Interpreter
 
-class solver:
+
 # get_function() -> Takes a function of x and y as an input. Make sure to use correct python syntax and put everything in curved brackets.
 #   --> Example: numODEsolver.get_function("x+y"), The diff.eq. would then be: y' = x+y and it will be numerically solved for y.
-    def get_function(self,func):
-        x,y = sp.symbols("x y")
-        func = sp.sympify(func)
-        f = sp.lambdify((x,y), func, "numpy")
+def get_function(func):
+    func = func.lower()
+    aeval = Interpreter()
+    if not "y'" in func:
+        f = aeval(f"lambda x,y: {func}")
         return f
+    else:
+         func = func.replace("y'","dy")
+         f = aeval(f"lambda x,y,dy: {func}")
+         return f
 
-# same get_function method, just for 2nd order odes you. Example: y'' = -y,
-    def get_function_2order(self,func):
-        x,y,dy = sp.symbols("x y dy")
-        func = sp.sympify(func)
-        f = sp.lambdify((x,y,dy), func, "numpy")
-        return f
-
-# You can choose between 2 methods to solve the ODE numerically : euler and rk4. Those take the function f from before
-#  as an input and 2 Initial conditions x0 and y0 as well as an x-axis bound. If n is a high number the result will be more accurate.
-# Both return arrays with the x,y values
-
-# solves the ode with initial conditions y(x0) , dy(x0)
-    def solve_euler_2order(self,f,x0,y0,dy0,n,bound):
+def euler_2order(f,x0,y0,dy0,n,bound):
         if n <= 0:
             raise ValueError("n must be greater than zero.")
-        y = [y0]
-        dy = [dy0]
-        x = [x0]
+        elif x0 > bound:
+             raise ValueError("initial condition must be < than the input bound!")
+        vals = np.zeros((n+1,3))
+        vals[0] = [x0,y0,dy0]
         h = (bound-x0)/n
         for i in range(n):
-            x_e2 = x[-1] + h
-            y_e2 = y[-1] + h * dy[-1]
-            dy_e2 = dy[-1] + h * f(x[-1],y[-1],dy[-1])
+             x,y,dy = vals[i]
 
-            x.append(x_e2)
-            y.append(y_e2)
-            dy.append(dy_e2)
+             dy_d = dy + h*f(x,y,dy)
+             y_d = y + h * dy_d
+             x_d = x + h
+             vals[i+1] = [x_d,y_d,dy_d]
 
-        return x,y,dy
+        return vals
 
-    def solve_euler(self,f,x0,y0,n,bound):
+def euler_1order(f,x0,y0,n,bound):
         if n <= 0:
             raise ValueError("n must be greater than zero.")
-        y = [y0]
-        x = [x0]
+        elif x0 > bound:
+             raise ValueError("initial condition must be < than the inpunt bound!")
+        coords = np.zeros((n+1, 2))
+        coords[0] = [x0,y0]
         h = (bound-x0)/n
         for i in range(n):
-            y_e = y[-1] + h * f(x[-1], y[-1])
-            x_e = x[-1] + h
+             x,y = coords[i]
+             x_d = x0 + (i+1)*h
+             y_d = y + h*f(x,y)
+             coords[i+1] = [x_d,y_d]
 
-            x.append(x_e)
-            y.append(y_e)
+        return coords
 
-        return x, y
+def rk4_1order(f,x0,y0,n,bound):
+     if n <= 0:
+          raise ValueError("n must be greater than zero.")
+     elif x0 > bound:
+        raise ValueError("initial condition must be < than the inpunt bound!")
+     coords = np.zeros((n+1,2))
+     coords[0] = [x0,y0]
+     h = (bound-x0) / n
+     for i in range(n):
+          x,y = coords[i]
+             
+          k1 = f(x,y)
+          k2 = f(x+h/2, y+h/2*k1)
+          k3 = f(x+h/2, y+h/2*k2)
+          k4 = f(x+h, y+h*k3)
 
-    def solve_rk4(self,f,x0,y0,n,bound):
-        if n <= 0:
-            raise ValueError("n must be greater than zero.")
-        y = [y0]
-        x = [x0]
-        h = (bound-x0) / n
-        for i in range(n):
-            k1 = h * f(x[-1], y[-1])
-            k2 = h * f(x[-1] + h / 2, y[-1] + k1 / 2)
-            k3 = h * f(x[-1] + h / 2, y[-1] + k2 / 2)
-            k4 = h * f(x[-1] + h, y[-1] + k3)
-
-            y_r = y[-1] + (k1 + 2 * k2 + 2 * k3 + k4) / 6
-            x_r = x[-1] + h
-
-            x.append(x_r)
-            y.append(y_r)
-
-        return x, y
+          x_d = x0 + (i+1)*h
+          y_d = y + h * (k1+2*k2+2*k3+k4)/6
+          coords[i+1] = [x_d,y_d]
+        
+     return coords
+        
 
 # Allows you to get the y-value from a specific x-value
 # You can adjust the decimal places, note that rk4 is more accurate
-    def get_value(self,x,y,val,dec):
+def get_value(x,y,val,dec):
         function = interp1d(x,y,kind="cubic")
         num = np.round(function(val),dec)
         return num

@@ -8,7 +8,7 @@ classifiers = [
 
 setup(
     name="numODEsolver",
-    version= "1.0.0",
+    version= "2.0.0",
     description= "Tool that solves ODE's numerically. Written in Python.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",

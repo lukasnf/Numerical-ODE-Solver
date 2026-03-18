@@ -1,1 +1,1 @@
-from .solver import solver
+import solver

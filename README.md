@@ -18,15 +18,15 @@ import matplotlib.pyplot as plt #optional for plot
 
 solver = solver()
 f = solver.get_function("y") 
-x,y = solver.solve_rk4(f,x0=0,y0=1,n=10000,bound=10.1)
+x,y = solver.rk4_1order(f,x0=0,y0=1,n=10000,bound=10.1)
 print(solver.get_value(x,y,val=10,dec=5))
 ```
 ```bash
 from numODEsolver import solver
 
 solver = solver()
-f = solver.get_function_2order("dy")
-x,y,dy = solver.solve_euler_2order(f,x0=0,y0=1,dy0=1,n=10000,bound=5)
+f = solver.get_function("y'+y") #y' = for 1st derivative. The ode would be y'' = y'+y
+x,y,dy = solver.euler_2order(f,x0=0,y0=1,dy0=1,n=10000,bound=5)
 print(solver.get_value(x,y,val=3,dec=2))
 ```
 
@@ -35,13 +35,14 @@ print(solver.get_value(x,y,val=3,dec=2))
 -  8.12.2024 - v0.1 -> only 1st order ODE's are solvable, more features coming soon
 - 15.12.2024 - v0.2 -> removed plot function
 - 26.1.2025 - v0.3 -> included 2nd order methods, see more on GitHub
+- 18.03.2025 - v2.0 -> more secure function handeling, more stable numerical methods.
 
 ---
 For more documentation take a look at the source code on my GitHub.
 
-You can modify the script to add more methods, adjust default parameters, or change visualization settings.
+You can modify the script to add more methods, or change visualization settings.
 
-This project is open-source and free to use. Contributions and suggestions are welcome!
+Contributions and suggestions are welcome!
 
 Lukas
 
