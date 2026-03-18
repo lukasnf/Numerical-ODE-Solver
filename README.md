@@ -13,21 +13,25 @@ pip install numODEsolver
 ```
 ## Example
 ```bash
-from numODEsolver import solver
+import numODEsolver as ns
 import matplotlib.pyplot as plt #optional for plot
 
-solver = solver()
+solver = ns.Solver()
 f = solver.get_function("y") 
-x,y = solver.rk4_1order(f,x0=0,y0=1,n=10000,bound=10.1)
-print(solver.get_value(x,y,val=10,dec=5))
+values = solver.rk4_1order(f,x0=0,y0=1,n=10000,bound=10.1)
+n = solver.get_value(values,val=10,dec=5)
+print(n)
+plt.plot(results[:,0],results[:,1])
+plt.show()
 ```
 ```bash
 from numODEsolver import solver
 
-solver = solver()
+solver = ns.Solver()
 f = solver.get_function("y'+y") #y' = for 1st derivative. The ode would be y'' = y'+y
 x,y,dy = solver.euler_2order(f,x0=0,y0=1,dy0=1,n=10000,bound=5)
-print(solver.get_value(x,y,val=3,dec=2))
+n = solver.get_value(values,val=3,dec=2)
+print(n)
 ```
 
 # Version History
