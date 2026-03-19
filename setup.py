@@ -8,13 +8,13 @@ classifiers = [
 
 setup(
     name="numODEsolver",
-    version= "2.0.0",
+    version= "2.0.3",
     description= "Tool that solves ODE's numerically. Written in Python.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/lukasnf/Numerical-ODE-Solver",
     packages = ["numODEsolver"],
-    install_requires=["numpy","sympy","scipy"],
+    install_requires=["numpy","asteval","scipy"],
     classifiers=classifiers,
     python_requires=">=3.8",
 

@@ -21,15 +21,15 @@ f = solver.get_function("y")
 values = solver.rk4_1order(f,x0=0,y0=1,n=10000,bound=10.1)
 n = solver.get_value(values,val=10,dec=5)
 print(n)
-plt.plot(results[:,0],results[:,1])
+plt.plot(values[:,0],values[:,1])
 plt.show()
 ```
 ```bash
-from numODEsolver import solver
+import numODEsolver as ns
 
 solver = ns.Solver()
 f = solver.get_function("y'+y") #y' = for 1st derivative. The ode would be y'' = y'+y
-x,y,dy = solver.euler_2order(f,x0=0,y0=1,dy0=1,n=10000,bound=5)
+values = solver.euler_2order(f,x0=0,y0=1,dy0=1,n=10000,bound=5)
 n = solver.get_value(values,val=3,dec=2)
 print(n)
 ```
@@ -39,7 +39,7 @@ print(n)
 -  8.12.2024 - v0.1 -> only 1st order ODE's are solvable, more features coming soon
 - 15.12.2024 - v0.2 -> removed plot function
 - 26.1.2025 - v0.3 -> included 2nd order methods, see more on GitHub
-- 18.03.2025 - v2.0 -> more secure function handeling, more stable numerical methods.
+- 19.03.2026 - v2.0 -> more secure function handeling, more stable numerical methods.
 
 ---
 For more documentation take a look at the source code on my GitHub.
