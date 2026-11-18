@@ -117,7 +117,7 @@ An expression that cannot be parsed raises a `ValueError`. Passing a function wi
 
 | Date | Version | Changes |
 | :--- | :--- | :--- |
-| 19.03.2026 | v2.0 | Safer function parsing, more stable numerical methods <!-- add why the major version jump --> |
+| 19.03.2026 | v3.0 | Safer function parsing, more stable numerical methods <!-- add why the major version jump --> |
 | 26.01.2025 | v0.3 | Added second-order methods |
 | 15.12.2024 | v0.2 | Removed built-in plot function (use Matplotlib instead) |
 | 08.12.2024 | v0.1 | First release: first-order ODEs |
