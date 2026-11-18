@@ -1,9 +1,5 @@
 # numODEsolver
 
-
-![PyPI](https://img.shields.io/pypi/v/numODEsolver)
-![Python](https://img.shields.io/pypi/pyversions/numODEsolver)
-
 A lightweight Python package for solving first- and second-order ordinary differential equations (ODEs) numerically, using Euler-type methods or the classical fourth-order Runge–Kutta method (RK4).
 
 ## Methods
