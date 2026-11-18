@@ -112,16 +112,6 @@ An expression that cannot be parsed raises a `ValueError`. Passing a function wi
 - Only single equations, no systems of several ODEs and no third or higher order
 - `get_value` needs at least 4 points (`n >= 3`) for the cubic interpolation
 - Functions are evaluated through asteval, which is slower than plain Python; very large `n` can take a while
-
-## Version History
-
-| Date | Version | Changes |
-| :--- | :--- | :--- |
-| 19.03.2026 | v3.0 | Safer function parsing, more stable numerical methods <!-- add why the major version jump --> |
-| 26.01.2025 | v0.3 | Added second-order methods |
-| 15.12.2024 | v0.2 | Removed built-in plot function (use Matplotlib instead) |
-| 08.12.2024 | v0.1 | First release: first-order ODEs |
-
 ## Contributing
 
 Bug reports and suggestions are welcome. Please open an [issue](https://github.com/lukasnf/Numerical-ODE-Solver/issues).
