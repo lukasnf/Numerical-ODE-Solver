@@ -114,6 +114,6 @@ An expression that cannot be parsed raises a `ValueError`. Passing a function wi
 Bug reports and suggestions are welcome. Please open an [issue](https://github.com/lukasnf/Numerical-ODE-Solver/issues).
 
 ## Author
-Developed with AI assistance. Methods and code reviewed and tested by the author.
 
+Developed with AI assistance. Methods and code reviewed and tested by the author.
 Lukas Filipon, B.Sc. Physics student at KIT
