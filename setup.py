@@ -13,7 +13,7 @@ classifiers = [
 
 setup(
     name="numODEsolver",
-    version= "3.0",
+    version= "3.1",
     description= "Tool that solves ODE's numerically. Written in Python.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
