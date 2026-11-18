@@ -2,7 +2,12 @@ from setuptools import setup, find_packages
 
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
 ]
 
@@ -13,6 +18,7 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/lukasnf/Numerical-ODE-Solver",
+    license="MIT",
     packages = ["numODEsolver"],
     install_requires=["numpy","asteval","scipy"],
     classifiers=classifiers,
