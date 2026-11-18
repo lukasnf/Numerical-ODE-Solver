@@ -3,20 +3,24 @@
 ![PyPI](https://img.shields.io/pypi/v/numODEsolver)
 ![Python](https://img.shields.io/pypi/pyversions/numODEsolver)
 
-A lightweight Python package for solving first- and second-order ordinary differential equations (ODEs) numerically, using the explicit Euler method or the classical fourth-order Runge–Kutta method (RK4).
+A lightweight Python package for solving first- and second-order ordinary differential equations (ODEs) numerically, using Euler-type methods or the classical fourth-order Runge–Kutta method (RK4).
 
 ## Methods
 
-| Method | Order of accuracy | Global error |
-| :--- | :--- | :--- |
-| Euler | 1st order | ∝ h |
-| Runge–Kutta (RK4) | 4th order | ∝ h⁴ |
+| Solver | ODE | Method | Global error |
+| :--- | :--- | :--- | :--- |
+| `euler_1order` | y' = f(x, y) | Explicit Euler | ∝ h |
+| `rk4_1order` | y' = f(x, y) | Classical RK4 | ∝ h⁴ |
+| `euler_2order` | y'' = f(x, y, y') | Semi-implicit Euler (Euler–Cromer) | ∝ h |
+| `rk4_2order` | y'' = f(x, y, y') | Classical RK4 | ∝ h⁴ |
 
 Halving the step size *h* reduces the error roughly by a factor of 2 for Euler and by a factor of 16 for RK4.
 
-![Error convergence of Euler and RK4](docs/convergence.png)
-<!-- Plot the error against the exact solution of y' = y over the step size h (log-log axes).
-     The slopes of 1 and 4 show the order of each method. -->
+![Error convergence of Euler and RK4](https://raw.githubusercontent.com/lukasnf/Numerical-ODE-Solver/main/docs/convergence.png)
+
+`euler_2order` updates y' first and then uses the *new* y' to update y. This keeps the energy of oscillating systems (e.g. y'' = −y) bounded, while the plain explicit Euler method lets it grow without limit.
+
+The second-order solvers rewrite y'' = f(x, y, y') as a system of two first-order ODEs, y' = v and v' = f(x, y, v), and advance y and v together.
 
 ## Installation
 
@@ -24,8 +28,7 @@ Halving the step size *h* reduces the error roughly by a factor of 2 for Euler a
 pip install numODEsolver
 ```
 
-Requires Python 3.8 or newer. Dependencies are installed automatically.
-<!-- Check: list the actual dependencies here, e.g. NumPy. -->
+Requires Python 3.8 or newer. The dependencies [NumPy](https://numpy.org), [SciPy](https://scipy.org) and [asteval](https://github.com/lmfit/asteval) are installed automatically.
 
 ## Usage
 
@@ -39,9 +42,9 @@ import matplotlib.pyplot as plt  # optional, only for plotting
 
 solver = ns.Solver()
 f = solver.get_function("y")  # right-hand side of y' = y
-values = solver.rk4_1order(f, x0=0, y0=1, n=10000, bound=10.1)
+values = solver.rk4_1order(f, x0=0, y0=1, n=10000, bound=10)
 
-print(solver.get_value(values, val=10, dec=5))  # y(10) ≈ e^10
+print(solver.get_value(values, val=10, dec=5))  # y(10) ≈ e^10 = 22026.46579
 
 plt.plot(values[:, 0], values[:, 1])
 plt.show()
@@ -56,37 +59,59 @@ import numODEsolver as ns
 
 solver = ns.Solver()
 f = solver.get_function("y'+y")  # right-hand side of y'' = y' + y; use y' for the first derivative
-values = solver.euler_2order(f, x0=0, y0=1, dy0=1, n=10000, bound=5)
+values = solver.rk4_2order(f, x0=0, y0=1, dy0=1, n=10000, bound=5)
 
-print(solver.get_value(values, val=3, dec=2))  # y(3)
+print(solver.get_value(values, val=3, dec=2))  # y(3) ≈ 92.86
 ```
+
+`euler_2order` takes the same arguments.
 
 ### Parameters
 
 | Parameter | Meaning |
 | :--- | :--- |
 | `x0`, `y0` | Initial point and initial value |
-| `dy0` | Initial value of y' (second-order methods only) |
-| `n` | Number of steps |
-| `bound` | End of the integration interval |
+| `dy0` | Initial value of y' (second-order solvers only) |
+| `n` | Number of steps (step size h = (bound − x0) / n) |
+| `bound` | End of the integration interval, must be greater than `x0` |
 | `val`, `dec` | x-value to evaluate and number of decimal places (`get_value`) |
 
-### Available solvers
+### Return value
 
-`euler_1order`, `rk4_1order`, `euler_2order`, `rk4_2order`
-<!-- Check that these names match your code. -->
+Every solver returns a NumPy array with one row per step:
+
+- first-order solvers: columns `[x, y]`
+- second-order solvers: columns `[x, y, y']`
+
+`get_value` interpolates y between the steps with a cubic spline. `val` must lie between `x0` and `bound`.
 
 ## How Functions Are Parsed
 
-`get_function` turns a string such as `"y'+y"` into a callable function.
-<!-- Explain briefly how this works and how it is made safe since v2.0
-     (e.g. which expressions are allowed). -->
+`get_function` turns a string such as `"y'+y"` into a callable function:
+
+1. The string is converted to lower case and every `y'` is replaced by a variable `dy`.
+2. The expression is evaluated with [asteval](https://github.com/lmfit/asteval) as `lambda x, y, dy=0: <expression>`.
+3. If the expression contains `y'`, the function is marked as second-order.
+
+Allowed are the variables `x`, `y` and `y'`, normal Python operators (`+ - * / **`) and the NumPy math functions and constants without a prefix, e.g. `sin`, `cos`, `exp`, `log`, `sqrt`, `abs`, `pi`:
+
+```python
+solver.get_function("sin(x) - y**2")
+solver.get_function("-0.5*y' - 4*y")
+```
+
+asteval does not allow imports or access to Python internals (like `__import__`), and numODEsolver also removes asteval's `open()`, so expressions cannot read files. This makes it much safer than Python's `eval`, but it is not a complete sandbox, so do not pass untrusted input.
+
+An expression that cannot be parsed raises a `ValueError`. Passing a function with `y'` to a first-order solver also raises a `ValueError`.
 
 ## Known Limitations
 
 - Fixed step size only (no adaptive step-size control)
 - Explicit methods: stiff ODEs may require very small step sizes
-<!-- Add the cases where the solver currently fails or gives wrong results. -->
+- Integration only forwards (`bound` must be greater than `x0`)
+- Only single equations, no systems of several ODEs and no third or higher order
+- `get_value` needs at least 4 points (`n >= 3`) for the cubic interpolation
+- Functions are evaluated through asteval, which is slower than plain Python; very large `n` can take a while
 
 ## Version History
 
@@ -99,8 +124,7 @@ print(solver.get_value(values, val=3, dec=2))  # y(3)
 
 ## Contributing
 
-Bug reports and suggestions are welcome. Please open an [issue](https://github.com/lukasnf/numODEsolver/issues).
-<!-- Check the repository URL. -->
+Bug reports and suggestions are welcome. Please open an [issue](https://github.com/lukasnf/Numerical-ODE-Solver/issues).
 
 ## Author
 
